@@ -61,3 +61,7 @@ Route::get('/', 'ToDoListController@index');
 //Route::get('/todos/{id}', 'ToDoListController@show');
 
 Route::resource('todos', 'ToDoListController');
+
+/*Event::listen('illuminate.query', function($query) {
+	var_dump($query);
+});*/

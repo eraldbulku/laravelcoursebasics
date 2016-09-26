@@ -15,7 +15,7 @@ class ToDoListController extends Controller
 {
     public function __construct()
     {
-    	//$this->beforeFilter('csrf', array('on'=>'post'));
+    	//$this->beforeFilter('csrf', array('on'=>['post', 'put']));
     }
 
     /**
@@ -50,7 +50,7 @@ class ToDoListController extends Controller
 	{
 		//define rules
 		$rules = array(
-			'title' => array('required', 'unique:todo_lists,name')
+			'name' => array('required', 'unique:todo_lists')
 		);
 
 		//pass input to the rules
@@ -62,7 +62,7 @@ class ToDoListController extends Controller
 			return Redirect::route('todos.create')->withErrors($validator)->withInput();
 		}
 
-		$name = Input::get('title');
+		$name = Input::get('name');
 		$list = new ToDoList();
 		$list->name = $name;
 		$list->save();
@@ -79,7 +79,10 @@ class ToDoListController extends Controller
 	public function show($id)
 	{	
 		$list = ToDoList::findOrFail($id);
-		return view('todos.show')->withList($list);
+		$items = $list->listItems()->get();
+		return view('todos.show')
+			->withList($list)
+			->withItems($items);
 		//return view('todos.show')->with($id);
 	}
 
@@ -92,7 +95,8 @@ class ToDoListController extends Controller
 	 */
 	public function edit($id)
 	{
-		//
+		$list = ToDoList::findOrFail($id);
+		return view('todos.edit')->withList($list);
 	}
 
 
@@ -104,7 +108,24 @@ class ToDoListController extends Controller
 	 */
 	public function update($id)
 	{
-		//
+		// define rules
+		$rules = array(
+				'name' => array('required', 'unique:todo_lists')
+			);
+
+		// pass input to validator
+		$validator = Validator::make(Input::all(), $rules);
+
+		// test if input fails
+		if ($validator->fails()) {
+			return Redirect::route('todos.edit', $id)->withErrors($validator)->withInput();
+		}
+
+		$name = Input::get('name');
+		$list = TodoList::findOrFail($id);
+		$list->name = $name;
+		$list->update();
+		return Redirect::route('todos.index')->withMessage('List Was Updated!');
 	}
 
 
@@ -116,6 +137,7 @@ class ToDoListController extends Controller
 	 */
 	public function destroy($id)
 	{
-		//
+		$todo_lists = ToDoList::findOrFail($id)->delete();
+		return Redirect::route('todos.index')->withMessage('Item deleted');
 	}
 }
