@@ -44,23 +44,26 @@ Route::get('/todos/{id}', function ($id) {
     return view('todos.show')->withId($id);
 });*/
 
-Route::get('/db', function() {
+/*Route::get('/db', function() {
 	//return DB::select('show tables');
 	//return DB::table('todo_lists')->get();
-	/*DB::table('todo_lists')->insert(
-		array('name'=> 'Maicon')
-	);*/
+	//DB::table('todo_lists')->insert(
+		//array('name'=> 'Maicon')
+	//);
 	//return DB::table('todo_lists')->get();
 
 	$result = DB::table('todo_lists')->where('name', 'Kobi')->first();
 	return $result->name;
-});
+});*/
 
 Route::get('/', 'ToDoListController@index');
 //Route::get('/todos', 'ToDoListController@index');
 //Route::get('/todos/{id}', 'ToDoListController@show');
 
 Route::resource('todos', 'ToDoListController');
+Route::resource('todos.items', 'ToDoItemController', ['except'=>['index', 'show']]);
+Route::patch('/todos/{todos}/items/{items}/complete', 
+	['as'=>'todos.items.complete', 'uses'=>'ToDoItemController@complete']);
 
 /*Event::listen('illuminate.query', function($query) {
 	var_dump($query);

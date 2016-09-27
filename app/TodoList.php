@@ -6,9 +6,14 @@ use Illuminate\Database\Eloquent\Model;
 
 class TodoList extends Model
 {
-    //
     public function listItems()
     {
     	return $this->hasMany('App\TodoItem');
+    }
+
+    public function delete()
+    {
+    	TodoItem::where('todo_list_id', $this->id)->delete();
+    	parent::delete();
     }
 }

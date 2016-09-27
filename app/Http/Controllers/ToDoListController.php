@@ -15,7 +15,7 @@ class ToDoListController extends Controller
 {
     public function __construct()
     {
-    	//$this->beforeFilter('csrf', array('on'=>['post', 'put']));
+    	//$this->beforeFilter('csrf', array('on'=>['post', 'put', 'delete']));
     }
 
     /**
